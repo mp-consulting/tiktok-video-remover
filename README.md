@@ -103,7 +103,10 @@ that an edge block must abort rather than retry, and that a dry run never reache
 the network. Everything is injectable — `fetch`, `sleep`, `jitter` — so the suite
 runs in about a tenth of a second with no browser and no network.
 
-Nothing leaves the browser: the extension talks only to tiktok.com.
+Nothing leaves the browser: the extension talks only to tiktok.com. See
+[PRIVACY.md](PRIVACY.md) — its claims are enforced by `test/privacy.test.js`,
+which fails the build if the code gains a second network destination, persists
+anything beyond the panel width, or loads code at runtime.
 
 ## Caveats
 
