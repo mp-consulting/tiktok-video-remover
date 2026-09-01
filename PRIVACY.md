@@ -1,6 +1,6 @@
 # Privacy Policy
 
-**TikTok Bulk Video Remover**
+**Bulk Post Cleaner for TikTok**
 Last updated: 1 September 2026
 
 ## The short version

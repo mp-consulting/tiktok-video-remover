@@ -59,7 +59,7 @@
     root.innerHTML = `
       <div class="ttr-grip" title="Drag to resize"></div>
       <div class="ttr-head">
-        <b>TikTok Bulk Video Remover</b>
+        <b>Bulk Post Cleaner</b>
         <button data-act="collapse" title="Collapse">⇥</button>
         <button data-act="close" title="Close">✕</button>
       </div>

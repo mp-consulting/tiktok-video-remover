@@ -64,9 +64,8 @@ HERO = '''<!doctype html><meta charset="utf-8">
 <div class="wrap">
   <span class="badge"><img src="data:image/png;base64,{ICON}">Bulk cleanup in one click</span>
   <h1>Delete your TikTok posts in bulk.</h1>
-  <p>Lists every post on your account &mdash; including the private ones TikTok&rsquo;s own
-     sort order hides &mdash; then removes just the ones you pick, through TikTok Studio&rsquo;s
-     own API instead of clicking through the page.</p>
+  <p>Loads every post on your account &mdash; including the private ones &mdash; then
+     removes just the ones you pick, in a single run. Nothing is deleted until you say so.</p>
   <ul>
     <li><b>Dry run first.</b> See exactly what would go, delete nothing.</li>
     <li>Filter by views or date, sort any column, export a CSV record.</li>
@@ -116,8 +115,8 @@ MARQUEE = '''<!doctype html><meta charset="utf-8"><style>
 <div class="wrap">
   <span class="badge"><img src="data:image/png;base64,{ICON}">Bulk cleanup in one click</span>
   <h1>Delete your TikTok posts in bulk.</h1>
-  <p>Lists every post on your account &mdash; including the private ones TikTok&rsquo;s own sort order
-     hides &mdash; then removes just the ones you pick, through TikTok Studio&rsquo;s own API.</p>
+  <p>Loads every post on your account &mdash; including the private ones &mdash; then
+     removes just the ones you pick, in a single run. Nothing is deleted until you say so.</p>
   <ul>
     <li><b>Dry run first.</b> See exactly what would go, delete nothing.</li>
     <li>Filter by views or date, sort any column, export a CSV record.</li>

@@ -1,7 +1,7 @@
 {
   "name": "tiktok-video-remover",
-  "version": "1.0.0",
-  "description": "A Chrome extension that lists every post on your TikTok account in a docked side panel and bulk-deletes the ones you select, by calling TikTok Studio's own API rather than automating the page.",
+  "version": "1.0.1",
+  "description": "A Chrome extension that lists every post on your TikTok account in a docked side panel and deletes the ones you select.",
   "author": {
     "name": "MP Consulting",
     "url": "https://github.com/mp-consulting"

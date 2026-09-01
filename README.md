@@ -1,8 +1,10 @@
-# TikTok Bulk Video Remover
+# Bulk Post Cleaner for TikTok
 
 A Chrome extension (Manifest V3) that lists every post on your TikTok account in a
-docked side panel and deletes the ones you select — by calling TikTok Studio's own
-API, not by clicking through the page.
+docked side panel and deletes the ones you select, with a dry run first.
+
+It drives TikTok Studio's own endpoints rather than automating the page; the
+[API notes](#the-api) below cover how and why.
 
 ## Install
 
