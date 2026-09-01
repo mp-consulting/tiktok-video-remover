@@ -27,7 +27,7 @@
 .ttr-head button:hover { color: #fff; background: #ffffff14; }
 
 .ttr-body { padding: 12px 14px; overflow: auto; display: flex; flex-direction: column;
-  gap: 10px; flex: 1; min-height: 0; }
+  gap: 8px; flex: 1; min-height: 0; }
 
 .ttr-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
 .ttr-row label { color: #9a9ba3; }
@@ -59,13 +59,14 @@
 
 /* The list gets the height — that is the point of docking it. */
 .ttr-list { border: 1px solid #2e3038; border-radius: 8px; overflow: auto;
-  flex: 1; min-height: 160px; }
+  flex: 1 1 auto; min-height: 220px; }
 /* minmax(0,1fr), not 1fr: a plain 1fr has min-width:auto, so a long nowrap
    description widens its own column and shunts every column after it out of
-   alignment with the header. */
+   alignment with the header. The fixed columns are kept tight so the post
+   description — the only column you actually read — gets the remainder. */
 .ttr-lhead, .ttr-item { display: grid;
-  grid-template-columns: 26px 40px minmax(0, 1fr) 78px 62px 52px 62px;
-  gap: 8px; align-items: center; padding: 6px 9px; }
+  grid-template-columns: 24px minmax(0, 1fr) 82px 54px 46px 54px;
+  gap: 8px; align-items: center; padding: 7px 9px; }
 .ttr-lhead { position: sticky; top: 0; background: #1c1d23; border-bottom: 1px solid #2e3038;
   color: #85868f; font-size: 10px; text-transform: uppercase; letter-spacing: .03em; z-index: 1; }
 .ttr-lhead span { cursor: pointer; user-select: none;
@@ -74,10 +75,6 @@
 .ttr-item { border-bottom: 1px solid #232530; }
 .ttr-item:last-child { border-bottom: 0; }
 .ttr-item:hover { background: #1b1c22; }
-.ttr-item img { width: 40px; height: 54px; object-fit: cover; border-radius: 4px; background: #232530; }
-/* TikTok's signed cover URLs often will not render outside their own player,
-   so a failed thumbnail collapses to a plain tile rather than a broken icon. */
-.ttr-thumb { width: 40px; height: 54px; border-radius: 4px; background: #232530; }
 .ttr-title { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .ttr-title a { color: inherit; text-decoration: none; }
 .ttr-title a:hover { text-decoration: underline; color: #7aa7ff; }
@@ -88,7 +85,7 @@
 .ttr-pin { color: #f0c987; font-size: 10px; }
 
 .ttr-log { background: #101115; border: 1px solid #2e3038; border-radius: 8px;
-  padding: 8px; height: 120px; overflow: auto; flex: none;
+  padding: 8px; height: 84px; overflow: auto; flex: none;
   font-family: ui-monospace, Menlo, monospace; font-size: 11px; color: #b9bac2; white-space: pre-wrap; }
 .ttr-priv { color: #9a9ba3; font-size: 10px; border: 1px solid #3a3d47;
   border-radius: 4px; padding: 0 4px; margin-left: 6px; }

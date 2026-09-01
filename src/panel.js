@@ -14,6 +14,7 @@
   let view = [];        // what the list currently shows (filtered + sorted)
   let root = null;
   let sortKey = 'date', sortDir = -1;
+  const outcomes = new Map();   // id -> last outcome, so results survive a re-render
 
   const $ = (sel) => root.querySelector(sel);
   const el = (tag, props = {}, kids = []) => {
@@ -25,6 +26,21 @@
     return n;
   };
   const fmt = (n) => (n == null ? '—' : n.toLocaleString());
+
+  const OUTCOME_LABEL = {
+    'dry-run': 'ok (dry)',
+    deleted: 'deleted',
+    'rate-limited': 'throttled',
+    'edge-blocked': 'blocked'
+  };
+
+  function paintOutcome(node, outcome) {
+    if (!node || !outcome) return;
+    const good = outcome === 'deleted' || outcome === 'dry-run';
+    node.className = `ttr-out ${good ? 'ttr-ok' : 'ttr-err'}`;
+    node.textContent = OUTCOME_LABEL[outcome] || 'failed';
+    node.title = outcome;
+  }
 
   function toggle(id, on) {
     on === undefined ? (selected.has(id) ? selected.delete(id) : selected.add(id))
@@ -66,8 +82,8 @@
         </div>
         <div class="ttr-list">
           <div class="ttr-lhead">
-            <span></span><span></span>
-            <span data-sort="label">Description</span>
+            <span></span>
+            <span data-sort="label">Post</span>
             <span data-sort="date">Date</span>
             <span data-sort="views" class="ttr-num">Views</span>
             <span data-sort="likes" class="ttr-num">Likes</span>
@@ -149,13 +165,6 @@
       const cb = el('input', { type: 'checkbox', checked: selected.has(p.id) });
       cb.addEventListener('change', () => toggle(p.id, cb.checked));
       item.append(cb);
-      if (p.thumb) {
-        const img = el('img', { src: p.thumb, loading: 'lazy', alt: '' });
-        img.addEventListener('error', () => img.replaceWith(el('div', { className: 'ttr-thumb' })), { once: true });
-        item.append(img);
-      } else {
-        item.append(el('div', { className: 'ttr-thumb' }));
-      }
       const title = el('div', { className: 'ttr-title' });
       title.append(el('a', { href: p.url, target: '_blank', rel: 'noreferrer',
         textContent: p.label, title: p.label }));
@@ -165,7 +174,9 @@
       item.append(el('div', { className: 'ttr-status', textContent: p.dateText || '—' }));
       item.append(el('div', { className: 'ttr-num', textContent: fmt(p.views) }));
       item.append(el('div', { className: 'ttr-num', textContent: fmt(p.likes) }));
-      item.append(el('span', { className: 'ttr-out', dataset: { el: 'out' } }));
+      const out = el('span', { className: 'ttr-out', dataset: { el: 'out' } });
+      if (outcomes.has(p.id)) { item.classList.add('ttr-done'); paintOutcome(out, outcomes.get(p.id)); }
+      item.append(out);
       rows.append(item);
     }
     syncCounts();
@@ -243,6 +254,7 @@
   }
 
   async function runQueue(queue, { dry, delayMs, batchSize, prefix = '' }) {
+    queue.forEach((p) => outcomes.delete(p.id));
     const rounds = Math.ceil(queue.length / batchSize);
     const eta = Math.round((rounds * delayMs) / 1000);
     log(`${dry ? 'Dry run' : 'DELETING'} — ${queue.length} posts, ${batchSize} at a time, ` +
@@ -250,17 +262,11 @@
     const { results } = await E.run(queue, {
       dryRun: dry, delayMs, batchSize, log,
       onItem: (i, post, outcome) => {
+        outcomes.set(post.id, outcome);
         const node = root.querySelector(`.ttr-item[data-id="${post.id}"]`);
         if (node) {
           node.classList.add('ttr-done');
-          const out = node.querySelector('[data-el="out"]');
-          const good = outcome === 'deleted' || outcome === 'dry-run';
-          out.className = `ttr-out ${good ? 'ttr-ok' : 'ttr-err'}`;
-          out.textContent = outcome === 'dry-run' ? 'ok (dry)'
-            : outcome === 'deleted' ? 'deleted'
-            : outcome === 'rate-limited' ? 'throttled'
-            : outcome === 'edge-blocked' ? 'blocked' : 'failed';
-          out.title = outcome;
+          paintOutcome(node.querySelector('[data-el="out"]'), outcome);
         }
         if (outcome === 'deleted') {
           selected.delete(post.id);
