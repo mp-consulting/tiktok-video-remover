@@ -2,7 +2,8 @@
 (() => {
   const NS = (window.__TTR__ = window.__TTR__ || {});
   if (NS.panel) return;
-  const U = NS.util, E = NS.engine;
+  const E = NS.engine;
+  const S = globalThis.TTR.select;
 
   const STUDIO_URL = 'https://www.tiktok.com/tiktokstudio/content';
   const onStudio = () => /\/tiktokstudio\/(content|post)/.test(location.pathname);
@@ -136,14 +137,7 @@
   /* ------------------------------------------------------------------ render */
 
   function visible() {
-    const q = ($('[data-el="search"]').value || '').toLowerCase().trim();
-    let out = q ? posts.filter((p) => p.label.toLowerCase().includes(q)) : posts.slice();
-    out.sort((a, b) => {
-      const x = a[sortKey], y = b[sortKey];
-      if (sortKey === 'label') return String(x).localeCompare(String(y)) * sortDir;
-      return ((x || 0) - (y || 0)) * sortDir;
-    });
-    return out;
+    return S.sortPosts(S.searchPosts(posts, $('[data-el="search"]').value), sortKey, sortDir);
   }
 
   function render() {
@@ -228,11 +222,7 @@
   }
 
   function exportCsv() {
-    const rows = [['id', 'url', 'description', 'posted', 'views', 'likes', 'comments', 'pinned', 'selected']];
-    for (const p of posts) {
-      rows.push([p.id, p.url, p.label, p.dateText, p.views, p.likes, p.comments, p.pinned, selected.has(p.id)]);
-    }
-    const csv = rows.map((r) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(',')).join('\n');
+    const csv = S.toCsv(posts, selected);
     const a = el('a', { href: URL.createObjectURL(new Blob([csv], { type: 'text/csv' })),
       download: `tiktok-posts-${new Date().toISOString().slice(0, 10)}.csv` });
     a.click();
@@ -257,7 +247,7 @@
     const eta = Math.round((rounds * delayMs) / 1000);
     log(`${dry ? 'Dry run' : 'DELETING'} — ${queue.length} posts, ${batchSize} at a time, ` +
         `${rounds} round${rounds === 1 ? '' : 's'}, ~${eta}s.`);
-    const results = await E.run(queue, {
+    const { results } = await E.run(queue, {
       dryRun: dry, delayMs, batchSize, log,
       onItem: (i, post, outcome) => {
         const node = root.querySelector(`.ttr-item[data-id="${post.id}"]`);

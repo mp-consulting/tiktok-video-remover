@@ -67,14 +67,39 @@ Two traps worth knowing, both found the hard way:
 
 ## Layout
 
+The logic lives in dependency-injected modules so it can be tested under Node
+without a browser; `engine.js` is the only browser-specific glue.
+
 | File | Role |
 |---|---|
 | `manifest.json` | MV3 manifest — `https://www.tiktok.com/*` host access |
-| `src/engine.js` | API client: paginate, map items, delete, queue runner |
+| `src/api.js` | Transport: request shape, 403 classification, backoff, delete outcomes |
+| `src/posts.js` | Item mapping and the dual-order catalogue crawl |
+| `src/runner.js` | Batched queue runner: parallelism, throttle retry, edge-block abort |
+| `src/select.js` | Pure list operations: search, sort, filter, CSV |
+| `src/engine.js` | Browser wiring — composes the above, exposes `__TTR__.engine` |
 | `src/panel.js` | Docked side panel: list, sort, filter, dry run, log |
 | `src/panel.css` | Panel styling |
 | `src/lib.js` | `sleep` / `jitter` |
 | `src/popup.html/js` | Toolbar popup: open Studio, toggle the panel |
+
+Load order matters — `engine.js` reads the modules off a `TTR` global, and
+`manifest.json` lists them accordingly. A test pins that order.
+
+## Development
+
+No dependencies and no build step.
+
+```sh
+npm run check   # node --check every source file
+npm test        # node --test, 53 tests
+```
+
+The tests cover the behaviours that were expensive to learn: that the descending
+sort hides private posts, that a 403 means throttling rather than a dead session,
+that an edge block must abort rather than retry, and that a dry run never reaches
+the network. Everything is injectable — `fetch`, `sleep`, `jitter` — so the suite
+runs in about a tenth of a second with no browser and no network.
 
 Nothing leaves the browser: the extension talks only to tiktok.com.
 

@@ -3,17 +3,33 @@
   "name": "TikTok Bulk Video Remover",
   "version": "1.0.0",
   "description": "Scan, select and bulk-delete your own TikTok posts from TikTok Studio, with dry-run and rate limiting.",
-  "permissions": ["storage"],
-  "host_permissions": ["https://www.tiktok.com/*"],
+  "permissions": [
+    "storage"
+  ],
+  "host_permissions": [
+    "https://www.tiktok.com/*"
+  ],
   "action": {
     "default_popup": "src/popup.html",
     "default_title": "TikTok Bulk Video Remover"
   },
   "content_scripts": [
     {
-      "matches": ["https://www.tiktok.com/*"],
-      "js": ["src/lib.js", "src/engine.js", "src/panel.js"],
-      "css": ["src/panel.css"],
+      "matches": [
+        "https://www.tiktok.com/*"
+      ],
+      "js": [
+        "src/lib.js",
+        "src/api.js",
+        "src/posts.js",
+        "src/runner.js",
+        "src/select.js",
+        "src/engine.js",
+        "src/panel.js"
+      ],
+      "css": [
+        "src/panel.css"
+      ],
       "run_at": "document_idle",
       "all_frames": false
     }

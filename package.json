@@ -1,0 +1,14 @@
+{
+  "name": "tiktok-video-remover",
+  "version": "1.0.0",
+  "description": "Chrome extension to bulk-delete your own TikTok posts via TikTok Studio's own API",
+  "private": true,
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "check": "node --check src/lib.js && node --check src/api.js && node --check src/posts.js && node --check src/runner.js && node --check src/select.js && node --check src/engine.js && node --check src/panel.js && node --check src/popup.js",
+    "test": "node --test"
+  }
+}
