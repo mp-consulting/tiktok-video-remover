@@ -82,6 +82,7 @@ without a browser; `engine.js` is the only browser-specific glue.
 | `src/panel.css` | Panel styling |
 | `src/lib.js` | `sleep` / `jitter` |
 | `src/popup.html/js` | Toolbar popup: open Studio, toggle the panel |
+| `icons/` | Extension icons, generated from `icons/icon.svg` |
 
 Load order matters — `engine.js` reads the modules off a `TTR` global, and
 `manifest.json` lists them accordingly. A test pins that order.
@@ -91,8 +92,9 @@ Load order matters — `engine.js` reads the modules off a `TTR` global, and
 No dependencies and no build step.
 
 ```sh
-npm run check   # node --check every source file
-npm test        # node --test, 53 tests
+npm run check    # node --check every source file
+npm test         # node --test, 57 tests
+npm run package  # dist/tiktok-video-remover-<version>.zip for the Web Store
 ```
 
 The tests cover the behaviours that were expensive to learn: that the descending
@@ -116,3 +118,25 @@ Nothing leaves the browser: the extension talks only to tiktok.com.
   their own player; a failed one collapses to a plain tile.
 - Bulk deletion is not something TikTok's terms invite. The 30-day restore window is
   your safety net.
+
+## Packaging and submission
+
+`npm run package` produces `dist/tiktok-video-remover-<version>.zip`. That ZIP is
+what the Chrome Web Store takes — it signs the CRX itself. A CRX is only needed
+for self-hosting or enterprise policy deployment, neither of which applies here.
+
+CI builds the same ZIP on every run and uploads it as a build artifact; publishing
+a GitHub release attaches it to that release. Uploading to the Web Store stays
+manual, because the first submission needs a listing, screenshots and permission
+justifications entered by hand.
+
+Before a first submission you still need, in the developer dashboard:
+
+- a one-off $5 developer registration
+- 1–5 screenshots at 1280x800 or 640x400
+- a single-purpose statement, and a justification for the `https://www.tiktok.com/*`
+  host permission ("read the signed-in user's own post list and delete the posts
+  they select")
+- a privacy disclosure. The extension makes no requests other than to tiktok.com,
+  stores nothing off-device, and has no analytics, so every data-collection box is
+  "no" — but the form still has to be filled in.

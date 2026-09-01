@@ -1,14 +1,38 @@
 {
   "name": "tiktok-video-remover",
   "version": "1.0.0",
-  "description": "Chrome extension to bulk-delete your own TikTok posts via TikTok Studio's own API",
-  "private": true,
+  "description": "A Chrome extension that lists every post on your TikTok account in a docked side panel and bulk-deletes the ones you select, by calling TikTok Studio's own API rather than automating the page.",
+  "author": {
+    "name": "MP Consulting",
+    "url": "https://github.com/mp-consulting"
+  },
   "license": "MIT",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/mp-consulting/tiktok-video-remover.git"
+  },
+  "bugs": {
+    "url": "http://github.com/mp-consulting/tiktok-video-remover/issues"
+  },
+  "homepage": "https://github.com/mp-consulting/tiktok-video-remover#readme",
+  "keywords": [
+    "chrome-extension",
+    "browser-extension",
+    "manifest-v3",
+    "tiktok",
+    "tiktok-studio",
+    "bulk-delete",
+    "content-management"
+  ],
   "engines": {
-    "node": ">=20"
+    "node": "^22.10.0 || ^24.0.0 || ^26.0.0"
   },
   "scripts": {
     "check": "node --check src/lib.js && node --check src/api.js && node --check src/posts.js && node --check src/runner.js && node --check src/select.js && node --check src/engine.js && node --check src/panel.js && node --check src/popup.js",
-    "test": "node --test"
+    "test": "node --test",
+    "clean": "rm -rf dist",
+    "package": "npm run clean && mkdir -p dist && zip -qr dist/tiktok-video-remover-$npm_package_version.zip manifest.json icons src -x '*.DS_Store' && echo \"dist/tiktok-video-remover-$npm_package_version.zip\"",
+    "prepackage": "npm run check && npm test"
   }
 }

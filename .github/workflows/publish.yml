@@ -1,0 +1,35 @@
+name: Attach extension ZIP to release
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build the store ZIP
+        run: npm run package
+
+      # Uploading to the Web Store is deliberately manual: the first submission
+      # needs a listing, screenshots and permission justifications entered by
+      # hand, and later ones go through review anyway.
+      - name: Attach the ZIP to the release
+        run: gh release upload "$GITHUB_REF_NAME" dist/*.zip --clobber
+        env:
+          GH_TOKEN: ${{ github.token }}

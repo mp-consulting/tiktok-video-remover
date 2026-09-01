@@ -56,3 +56,37 @@ test('panel only reaches for exports that actually exist', () => {
     assert.ok(engineExports.includes(name), `panel uses E.${name}, not on the engine`);
   }
 });
+
+test('manifest and package.json versions stay in step', () => {
+  // Two version numbers is one too many; drift breaks a release quietly.
+  const pkg = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8'));
+  assert.equal(manifest.version, pkg.version);
+});
+
+test('no permission is declared that the code never uses', () => {
+  // `storage` sat here unused for a while. Unused permissions get submissions
+  // rejected and widen what the extension can reach.
+  const sources = ['lib', 'api', 'posts', 'runner', 'select', 'engine', 'panel', 'popup']
+    .map((n) => fs.readFileSync(path.join(root, 'src', `${n}.js`), 'utf8')).join('\n');
+  for (const perm of manifest.permissions || []) {
+    assert.match(sources, new RegExp(`chrome\\.${perm}\\b`), `"${perm}" is declared but never used`);
+  }
+});
+
+test('every icon the manifest promises is on disk and non-empty', () => {
+  const declared = { ...(manifest.icons || {}), ...((manifest.action || {}).default_icon || {}) };
+  assert.ok(declared['128'], 'the Web Store requires a 128px icon');
+  for (const file of new Set(Object.values(declared))) {
+    const full = path.join(root, file);
+    assert.ok(fs.existsSync(full), `${file} is missing`);
+    assert.ok(fs.statSync(full).size > 0, `${file} is empty`);
+  }
+});
+
+test('the extension declares no remote code and stays same-origin', () => {
+  // MV3 forbids remote code; reviewers also check the host list is minimal.
+  assert.ok(!manifest.content_security_policy, 'no CSP override needed');
+  for (const host of manifest.host_permissions) {
+    assert.match(host, /^https:\/\/www\.tiktok\.com\//);
+  }
+});

@@ -34,3 +34,32 @@ jobs:
 
       - name: Test
         run: npm test
+
+  package:
+    name: Package
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      # The Chrome Web Store takes a ZIP; it signs the CRX itself. A CRX is only
+      # needed for self-hosting, which this extension does not do.
+      - name: Build the store ZIP
+        run: npm run package
+
+      - name: Upload the ZIP
+        uses: actions/upload-artifact@v5
+        with:
+          name: extension-zip
+          path: dist/*.zip
+          if-no-files-found: error
